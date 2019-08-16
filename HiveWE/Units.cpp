@@ -182,7 +182,7 @@ void Units::save() const {
 	write_units(units);
 	write_units(items);
 
-	hierarchy.map.file_write("war3mapUnits.doo", writer.buffer);
+	hierarchy.map_file_write("war3mapUnits.doo", writer.buffer);
 }
 
 void Units::load_unit_modifications(BinaryReader& reader) {
@@ -207,7 +207,7 @@ void Units::load_item_modifications(BinaryReader& reader) {
 
 void Units::update_area(const QRect& area) {
 	for (auto&& i : tree.query(area)) {
-		i->position.z = map->terrain.corners[i->position.x][i->position.y].final_ground_height();
+		i->position.z = map->terrain.interpolated_height(i->position.x, i->position.y);
 		i->update();
 	}
 }
@@ -252,7 +252,7 @@ void Units::render() const {
 }
 
 std::shared_ptr<StaticMesh> Units::get_mesh(const std::string& id) {
-	if (id_to_mesh.find(id) != id_to_mesh.end()) {
+	if (id_to_mesh.contains(id)) {
 		return id_to_mesh[id];
 	}
 

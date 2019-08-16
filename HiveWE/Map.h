@@ -12,6 +12,9 @@ public:
 	PathingMap pathing_map;
 	Doodads doodads;
 	Units units;
+	Regions regions;
+	GameCameras cameras;
+	Sounds sounds;
 	Imports imports;
 	ObjectEditorExtension objects;
 
@@ -31,26 +34,15 @@ public:
 	bool render_debug = false;
 
 	fs::path filesystem_path;
+	std::string name;
 
-	// Temporary for instancing. Replace by some kind of scenenode
+	// For instancing
 	std::vector<StaticMesh*> meshes;
 
-	double terrain_time;
-	double terrain_tiles_time;
-	double terrain_water_time;
-	double terrain_cliff_time;
-	double mouse_world_time;
-	double doodad_time;
-	double unit_time;
-	double render_time;
+	std::chrono::steady_clock::time_point last_time = std::chrono::high_resolution_clock::now();
 	double total_time;
-	double total_time_min = std::numeric_limits<double>::max();
-	double total_time_max = std::numeric_limits<double>::min();
-
-	~Map();
 
 	void load(const fs::path& path);
-	bool save(const fs::path& path, bool switch_working = true);
-	void play_test();
+	bool save(const fs::path& path);
 	void render(int width, int height);
 };

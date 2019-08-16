@@ -143,7 +143,7 @@ DoodadPalette::DoodadPalette(QWidget* parent) : Palette(parent) {
 
 	connect(ui.tileset, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &DoodadPalette::update_list);
 	connect(ui.type, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &DoodadPalette::update_list);
-	connect(ui.doodads, &QListWidget::itemDoubleClicked, this, &DoodadPalette::selection_changed);
+	connect(ui.doodads, &QListWidget::itemClicked, this, &DoodadPalette::selection_changed);
 
 	update_list();
 }
@@ -189,8 +189,16 @@ void DoodadPalette::update_list() {
 			continue;
 		}
 
+
+
 		std::string text = slk.data("Name", i);
-		if (!is_doodad) {
+
+		const std::string trigstr = map->trigger_strings.string(text);
+		if (!trigstr.empty()) {
+			text = trigstr;
+		}
+
+		if (!is_doodad) { 
 			text += " " + destructibles_slk.data("EditorSuffix", i);
 		}
 

@@ -3,9 +3,9 @@
 class BinaryReader {
 public:
 	std::vector<uint8_t> buffer;
-	long long int position = 0;
+	unsigned long long int position = 0;
 
-	explicit BinaryReader(const std::vector<uint8_t>& buffer) : buffer(buffer) {}
+	explicit BinaryReader(std::vector<uint8_t> buffer) : buffer(buffer) {}
 
 	template<typename T>
 	T read() {
@@ -38,7 +38,7 @@ public:
 	std::string read_c_string() {
 		std::string string(reinterpret_cast<char*>(buffer.data() + position));
 		position += string.size() + 1;
-
+		
 		if (position > buffer.size()) {
 			throw std::out_of_range("Trying to read out of range of buffer");
 		}

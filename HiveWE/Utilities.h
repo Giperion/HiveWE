@@ -21,6 +21,7 @@ public:
 };
 
 // String functions
+std::string string_replaced(const std::string& source, const std::string& from, const std::string& to);
 std::vector<std::string> split(const std::string& string, char delimiter);
 std::vector<std::string_view> split_new(const std::string& string, char delimiter);
 
@@ -28,7 +29,7 @@ bool is_number(const std::string& s);
 
 GLuint compile_shader(const fs::path& vertex_shader, const fs::path& fragment_shader);
 
-std::string read_text_file(const std::string& path);
+std::string read_text_file(const fs::path& path);
 
 fs::path find_warcraft_directory();
 
@@ -46,3 +47,11 @@ extern Shapes shapes;
 struct ItemSet {
 	std::vector<std::pair<std::string, int>> items;
 };
+
+namespace std {
+	template<> struct hash<QString> {
+		std::size_t operator()(const QString& s) const {
+			return qHash(s);
+		}
+	};
+}

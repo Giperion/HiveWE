@@ -1,8 +1,8 @@
 #include <stdafx.h>
 
 void Imports::load(BinaryReader& reader) {
-	int version = reader.read<uint32_t>();
-
+	int version = reader.read<uint32_t>(); // ToDo check version
+	std::cout << "Import version: " << version << "\n";
 	const int entries = reader.read<uint32_t>();
 	for (int i = 0; i < entries; i++) {
 		const int custom = reader.read<uint8_t>();
@@ -31,7 +31,7 @@ void Imports::save() const {
 
 	int item_count = 0;
 	std::function<void(const std::vector<ImportItem>&)> count_files = [&](const std::vector<ImportItem>& items) {
-		for (auto&& i : items) {
+		for (const auto& i : items) {
 			item_count++;
 			count_files(i.children);
 		}
@@ -40,7 +40,7 @@ void Imports::save() const {
 
 	writer.write<uint32_t>(item_count);
 	std::function<void(const std::vector<ImportItem>&)> save_directories = [&](const std::vector<ImportItem>& items) {
-		for (auto&& i : items) {
+		for (const auto& i : items) {
 			if (i.directory) {
 				save_directories(i.children);
 			} else {
@@ -56,7 +56,7 @@ void Imports::save() const {
 	writer.write_c_string("war3map.dir");
 
 
-	hierarchy.map.file_write("war3map.imp", writer.buffer);
+	hierarchy.map_file_write("war3map.imp", writer.buffer);
 }
 
 void Imports::load_dir_file(BinaryReader& reader) {
@@ -117,7 +117,7 @@ void Imports::save_dir_file() const {
 
 	save_directories(imports);
 
-	hierarchy.map.file_write("war3map.dir", writer.buffer);
+	hierarchy.map_file_write("war3map.dir", writer.buffer);
 }
 
 void Imports::populate_uncategorized() {
@@ -127,21 +127,26 @@ void Imports::populate_uncategorized() {
 }
 
 void Imports::remove_file(const fs::path& file) const {
-	SFileRemoveFile(hierarchy.map.handle, file.string().c_str(), 0);
+	//SFileRemoveFile(hierarchy.map.handle, file.string().c_str(), 0);
+	hierarchy.map_file_remove(file);
 }
 
 bool Imports::import_file(const fs::path& path, const fs::path& file) const {
-	return SFileAddFileEx(hierarchy.map.handle, path.c_str(), file.string().c_str(), MPQ_FILE_COMPRESS | MPQ_FILE_REPLACEEXISTING, MPQ_COMPRESSION_ZLIB, MPQ_COMPRESSION_NEXT_SAME);
+	//return SFileAddFileEx(hierarchy.map.handle, path.c_str(), file.string().c_str(), MPQ_FILE_COMPRESS | MPQ_FILE_REPLACEEXISTING, MPQ_COMPRESSION_ZLIB, MPQ_COMPRESSION_NEXT_SAME);
+//	hierarchy.map.file_add(path, file);
+	return false;
 }
 
 void Imports::export_file(const fs::path& path, const fs::path& file) const {
-	auto buffer = hierarchy.map.file_open(file).read();
-	auto output = std::ofstream(path / file.filename(), std::ios::binary);
-	output.write(reinterpret_cast<char*>(buffer.data()), buffer.size());
+	// ToDo use common folder interface
+//	auto buffer = hierarchy.map.file_open(file).read();
+	//auto output = std::ofstream(path / file.filename(), std::ios::binary);
+	//output.write(reinterpret_cast<char*>(buffer.data()), buffer.size());
 }
 
-int Imports::file_size(const fs::path& file) const {
-	return hierarchy.map.file_open(file).size();
+size_t Imports::file_size(const fs::path& file) const {
+//	return hierarchy.map.file_open(file).size();
+	return 0;
 }
 
 std::vector<std::reference_wrapper<const ImportItem>> Imports::find(std::function<bool(const ImportItem&)> predicate) const {

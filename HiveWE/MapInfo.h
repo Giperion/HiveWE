@@ -8,6 +8,7 @@ enum class PlayerType {
 };
 
 enum class PlayerRace {
+	selectable,
 	human,
 	orc,
 	undead,
@@ -21,20 +22,16 @@ struct PlayerData {
 	int fixed_start_position;
 	std::string name;
 	glm::vec2 starting_position;
-	int ally_low_priorities_flags;
-	int ally_high_priorities_flags;
-};
-
-enum class FocusFlags {
-	allied,
-	allied_victory,
-	share_vision,
-	share_unit_control,
-	share_advanced_unit_control
+	uint32_t ally_low_priorities_flags;
+	uint32_t ally_high_priorities_flags;
 };
 
 struct ForceData {
-	FocusFlags focus_flags;
+	bool allied;
+	bool allied_victory;
+	bool share_vision;
+	bool share_unit_control;
+	bool share_advanced_unit_control;
 	int player_masks;
 	std::string name;
 };
@@ -77,15 +74,19 @@ class MapInfo {
 public:
 	int map_version;
 	int editor_version;
+	int game_version_major;
+	int game_version_minor;
+	int game_version_patch;
+	int game_version_build;
 	std::string name;
 	std::string author;
 	std::string description;
 	std::string suggested_players;
 
-	glm::vec2 camera_top_left;
-	glm::vec2 camera_top_right;
-	glm::vec2 camera_bottom_left;
-	glm::vec2 camera_bottom_right;
+	glm::vec2 camera_left_bottom;
+	glm::vec2 camera_right_top;
+	glm::vec2 camera_left_top;
+	glm::vec2 camera_right_bottom;
 
 	glm::ivec4 camera_complements;
 
@@ -135,6 +136,8 @@ public:
 	char custom_light_tileset;
 	glm::u8vec4 water_color;
 
+	bool lua;
+
 	std::vector<PlayerData> players;
 	std::vector<ForceData> forces;
 	std::vector<UpgradeAvailability> available_upgrades;
@@ -142,7 +145,7 @@ public:
 	std::vector<RandomUnitTable> random_unit_tables;
 	std::vector<RandomItemTable> random_item_tables;
 
-	static constexpr int write_version = 25;
+	static constexpr int write_version = 28;
 
 	void load(BinaryReader& reader);
 	void save() const;

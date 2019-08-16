@@ -1,8 +1,13 @@
 #include "stdafx.h"
 
-void APIENTRY gl_debug_output(const GLenum source, const GLenum type, const GLuint id, const GLenum severity, const GLsizei length, const GLchar *message, void *) {
+void APIENTRY gl_debug_output(const GLenum source, const GLenum type, const GLuint id, const GLenum severity, const GLsizei, const GLchar *message, void *) {
 	// Skip buffer info messages, framebuffer info messages, texture usage state warning, redundant state change buffer
-	if (id == 131185 || id == 131169 || id == 131204 || id == 8) {
+	if (id == 131185 // ?
+		|| id == 131169 // ?
+		|| id == 131204 // ?
+		|| id == 8 // ?
+		|| id == 131218) // Unexplainable performance warnings
+	{
 		return;
 	}
 
@@ -82,6 +87,10 @@ void GLWidget::resizeGL(const int w, const int h) {
 
 	const double delta = elapsed_timer.nsecsElapsed() / 1'000'000'000.0;
 	camera->aspect_ratio = double(w) / h;
+
+	if (!map) {
+		return;
+	}
 	camera->update(delta);
 }
 
@@ -89,18 +98,28 @@ void GLWidget::update_scene() {
 	const double delta = elapsed_timer.nsecsElapsed() / 1'000'000'000.0;
 	elapsed_timer.start();
 
-	camera->update(delta);
+	if (map) {
+		camera->update(delta);
 
-	map->terrain.current_texture += std::max(0.0, map->terrain.animation_rate * delta);
-	if (map->terrain.current_texture >= map->terrain.water_textures_nr) {
-		map->terrain.current_texture = 0;
+		map->terrain.current_texture += std::max(0.0, map->terrain.animation_rate * delta);
+		if (map->terrain.current_texture >= map->terrain.water_textures_nr) {
+			map->terrain.current_texture = 0;
+		}
 	}
 
 	update();
-	QTimer::singleShot(std::max(0.0, 16.0 - map->total_time), this, &GLWidget::update_scene);
+	if (map) {
+		QTimer::singleShot(std::max(0.0, 16.0 - map->total_time), this, &GLWidget::update_scene);
+	} else {
+		QTimer::singleShot(std::max(0.0, 16.0), this, &GLWidget::update_scene);
+	}
 }
 
 void GLWidget::paintGL() {
+	if (!map) {
+		return;
+	}
+
 	gl->glClearColor(0, 0, 0, 1);
 	gl->glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -114,16 +133,7 @@ void GLWidget::paintGL() {
 		p.setPen(QColor(Qt::GlobalColor::white));
 		p.setFont(QFont("Arial", 10, 100, false));
 		// Rendering time
-		p.drawText(10, 20, QString::fromStdString("Terrain Drawing: " + std::to_string(map->terrain_time)));
-			p.drawText(20, 35, QString::fromStdString("Terrain Tiles: " + std::to_string(map->terrain_tiles_time)));
-			p.drawText(20, 50, QString::fromStdString("Terrain Cliffs: " + std::to_string(map->terrain_cliff_time)));
-			p.drawText(20, 65, QString::fromStdString("Terrain Water: " + std::to_string(map->terrain_water_time)));
-		p.drawText(10, 80, QString::fromStdString("Mouse to world coordinates: " + std::to_string(map->terrain_time)));
-		p.drawText(10, 95, QString::fromStdString("Doodad Queue: " + std::to_string(map->doodad_time)));
-		p.drawText(10, 110, QString::fromStdString("Unit Queue: " + std::to_string(map->unit_time)));
-		p.drawText(10, 125, QString::fromStdString("Render time: " + std::to_string(map->render_time)));
-
-		p.drawText(10, 145, QString::fromStdString("Total time: " + std::to_string(map->total_time) + " Min: " + std::to_string(map->total_time_min) + " Max: " + std::to_string(map->total_time_max)));
+		p.drawText(10, 20, QString::fromStdString("Total time: " + std::to_string(map->total_time)));
 
 		// General info
 		p.drawText(300, 20, QString::fromStdString("Mouse Grid Position X: " + std::to_string(input_handler.mouse_world.x) + " Y: " + std::to_string(input_handler.mouse_world.y)));
@@ -145,7 +155,12 @@ void GLWidget::paintGL() {
 }
 
 void GLWidget::keyPressEvent(QKeyEvent* event) {
+	if (!map) {
+		return;
+	}
+
 	input_handler.keys_pressed.emplace(event->key());
+
 	switch (event->key()) {
 		case Qt::Key_Escape:
 			exit(0);
@@ -158,10 +173,18 @@ void GLWidget::keyPressEvent(QKeyEvent* event) {
 }
 
 void GLWidget::keyReleaseEvent(QKeyEvent* event) {
+	if (!map) {
+		return;
+	}
+
 	input_handler.keys_pressed.erase(event->key());
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent* event) {
+	if (!map) {
+		return;
+	}
+
 	input_handler.mouse_move_event(event);
 	camera->mouse_move_event(event);
 
@@ -171,6 +194,10 @@ void GLWidget::mouseMoveEvent(QMouseEvent* event) {
 }
 
 void GLWidget::mousePressEvent(QMouseEvent* event) {
+	if (!map) {
+		return;
+	}
+
 	camera->mouse_press_event(event);
 	if (map->brush) {
 		map->brush->mouse_press_event(event);
@@ -178,6 +205,10 @@ void GLWidget::mousePressEvent(QMouseEvent* event) {
 }
 
 void GLWidget::mouseReleaseEvent(QMouseEvent* event) {
+	if (!map) {
+		return;
+
+	}
 	camera->mouse_release_event(event);
 	if (map->brush) {
 		map->brush->mouse_release_event(event);
@@ -185,5 +216,9 @@ void GLWidget::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 void GLWidget::wheelEvent(QWheelEvent* event) {
+	if (!map) {
+		return;
+	}
+
 	camera->mouse_scroll_event(event);
 }

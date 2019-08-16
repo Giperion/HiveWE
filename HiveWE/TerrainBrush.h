@@ -7,11 +7,11 @@ public:
 	bool apply_cliff = false;
 	bool apply_tile_pathing = true;
 	bool apply_cliff_pathing = true;
+	bool apply_water_pathing = true;
 
 	bool enforce_water_height_limits = true;
 	bool change_doodad_heights = true;
 	bool relative_cliff_heights = false;
-
 
 	std::string tile_id;
 
@@ -69,10 +69,12 @@ private:
 		{ 15, 1 }
 	};
 
-	//bool brush_hold = false;
 	int layer_height = 0;
 	float deformation_height = 0.f;
 
 	QRect texture_height_area;
 	QRect cliff_area;
+	std::vector<Doodad> pre_change_doodads;
+	std::map<int, Doodad> post_change_doodads;
+
 };

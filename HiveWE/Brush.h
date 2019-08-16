@@ -10,11 +10,12 @@ public:
 
 	enum class Mode {
 		placement,
-		selection
+		selection,
+		pasting
 	};
 
 	bool uv_offset_locked = false;
-	glm::ivec2 uv_offset;
+	glm::ivec2 uv_offset = { 0, 0 };
 	int size_granularity = 1;
 	int uv_offset_granularity = 4;
 
@@ -38,11 +39,18 @@ public:
 	virtual void mouse_press_event(QMouseEvent* event);
 	virtual void mouse_release_event(QMouseEvent* event);
 
+	virtual void delete_selection() {};
+	virtual void copy_selection() {};
+	virtual void cut_selection() {};
 	virtual void clear_selection() {};
+	virtual void place_clipboard() {};
 
+	virtual void clear_clipboard() {};
+	
 	void render() const;
 	virtual void render_selector() const;
 	virtual void render_selection() const {};
+	virtual void render_clipboard() const {}
 	virtual void render_brush() const;
 
 	virtual void apply_begin() {};
@@ -51,8 +59,9 @@ public:
 protected:
 	Shape shape = Shape::circle;
 	Mode mode = Mode::placement;
+	Mode return_mode = Mode::placement;
 
-	int size = 0;
+	int size = 1;
 	glm::ivec2 position;
 
 	bool selection_started = false;

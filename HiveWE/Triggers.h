@@ -7,7 +7,7 @@ struct TriggerCategory {
 };
 
 struct TriggerVariable {
-//	std::string name;
+	//	std::string name;
 	std::string type;
 	bool is_array;
 	int array_size = 0;
@@ -76,7 +76,18 @@ struct Trigger {
 
 class Triggers {
 	std::unordered_map<std::string, int> argument_counts;
+	const std::string seperator = "//===========================================================================\n";
 
+	static constexpr int write_version = 8;
+	static constexpr int write_string_version = 1;
+
+	std::string convert_eca_to_jass(const ECA& lines, std::string& pre_actions, const std::string& trigger_name, bool nested) const;
+	std::string testt(const std::string& trigger_name, const std::string& parent_name, const std::vector<TriggerParameter>& parameters, std::string& pre_actions, bool add_call) const;
+	std::string resolve_parameter(const TriggerParameter& parameter, const std::string& trigger_name, std::string& pre_actions, const std::string& base_type, bool add_call = false) const;
+	std::string get_base_type(const std::string& type) const;
+	std::string get_type(const std::string& function_name, int parameter) const;
+	std::string generate_function_name(const std::string& trigger_name) const;
+	std::string convert_gui_to_jass(const Trigger& trigger, std::vector<std::string>& initialization_triggers) const;
 public:
 	ini::INI trigger_strings;
 	ini::INI trigger_data;
@@ -91,9 +102,10 @@ public:
 
 	void load(BinaryReader& reader);
 	void load_jass(BinaryReader& reader);
-
 	void save() const;
 	void save_jass() const;
+
+	void generate_map_script();
 
 	int next_id = 0;
 };

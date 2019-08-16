@@ -12,6 +12,7 @@ struct Corner {
 	bool water;
 	bool boundary;
 	bool cliff = false;
+	bool romp = false;
 
 	int ground_variation;
 	int cliff_variation;
@@ -40,12 +41,14 @@ struct TilePathingg {
 class Terrain : public QObject {
 	Q_OBJECT
 
-	static const int write_version = 11;
+	static constexpr int write_version = 11;
 
-	// For GPU uploading
+	// Sequential versions for GPU uploading
 	std::vector<float> ground_heights;
 	std::vector<float> ground_corner_heights;
 	std::vector<glm::u16vec4> ground_texture_list;
+	std::vector<float> water_heights;
+	std::vector<unsigned char> water_exists_data;
 
 public:
 	char tileset;
@@ -58,18 +61,20 @@ public:
 
 	// Ground
 	std::shared_ptr<Shader> ground_shader;
-	std::map<std::string, size_t> ground_texture_to_id;
+	std::map<std::string, int> ground_texture_to_id;
 	std::vector<std::shared_ptr<GroundTexture>> ground_textures;
 	std::unordered_map<std::string, TilePathingg> pathing_options;
 
+	// GPU textures
 	GLuint ground_height;
 	GLuint ground_corner_height;
 	GLuint ground_texture_data;
+	GLuint water_height;
+	GLuint water_exists;
 
 	std::vector<std::vector<Corner>> corners;
 	// For undo/redo operations
 	std::vector<std::vector<Corner>> old_corners;
-
 
 	int variation_size = 64;
 	int blight_texture;
@@ -78,7 +83,7 @@ public:
 	slk::SLK cliff_slk;
 
 	// Cliffs
-	std::vector <glm::ivec3> cliffs;
+	std::vector<glm::ivec3> cliffs;
 	std::map<std::string, int> path_to_cliff;
 	std::map<std::string, int> cliff_variations;
 	std::vector<int> cliff_to_ground_texture;
@@ -92,9 +97,9 @@ public:
 	int cliff_texture_size = 256;
 
 	// Water
-	float min_depth = 10.f / 128;
-	float deeplevel = 64.f / 128;
-	float maxdepth = 72.f / 128;
+	float min_depth = 10.f / 128.f;
+	float deeplevel = 64.f / 128.f;
+	float maxdepth = 72.f / 128.f;
 
 	glm::vec4 shallow_color_min;
 	glm::vec4 shallow_color_max;
@@ -104,13 +109,7 @@ public:
 	float water_offset;
 	int water_textures_nr;
 	int animation_rate;
-	
-	std::vector<float> water_heights;
-	std::vector<unsigned char> water_exists_data;
-	GLuint water_height;
-	GLuint water_exists;
 
-	std::vector<std::shared_ptr<Texture>> water_textures;
 	std::shared_ptr<Shader> water_shader;
 
 	float current_texture = 1.f;
@@ -118,8 +117,8 @@ public:
 
 	~Terrain();
 
-	void create();
 	bool load(BinaryReader& reader);
+	void create();
 	void save() const;
 	void render() const;
 
@@ -128,6 +127,12 @@ public:
 	int real_tile_texture(int x, int y) const;
 	int get_tile_variation(int ground_texture, int variation) const;
 	glm::u16vec4 get_texture_variations(int x, int y) const;
+
+	float interpolated_height(float x, float y) const;
+
+	//bool is_corner_ramp_mesh(int x, int y);
+	bool is_corner_ramp_entrance(int x, int y);
+	//bool is_corner_cliff(int x, int y);
 
 	Texture minimap_image();
 

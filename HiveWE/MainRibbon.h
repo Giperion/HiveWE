@@ -19,6 +19,7 @@ public:
 	QRibbonButton* lighting_visible = new QRibbonButton;
 	QRibbonButton* wireframe_visible = new QRibbonButton;
 	QRibbonButton* debug_visible = new QRibbonButton;
+	QRibbonButton* minimap_visible = new QRibbonButton;
 
 	QRibbonButton* switch_camera = new QRibbonButton;
 	QRibbonButton* reset_camera = new QRibbonButton;
@@ -34,6 +35,7 @@ public:
 	QRibbonButton* switch_warcraft = new QRibbonButton;
 
 	QRibbonButton* import_manager = new QRibbonButton;
+	QRibbonButton* trigger_editor = new QRibbonButton;
 	QRibbonButton* trigger_viewer = new QRibbonButton;
 	QRibbonButton* object_editor = new QRibbonButton;
 
@@ -42,10 +44,15 @@ public:
 	QRibbonButton* pathing_palette = new QRibbonButton;
 
 	QToolButton* new_map = new QToolButton;
-	QToolButton* open_map = new QToolButton;
+	QToolButton* open_map_mpq = new QToolButton;
+	QToolButton* open_map_folder = new QToolButton;
+
 	QToolButton* save_map = new QToolButton;
 	QToolButton* save_map_as = new QToolButton;
+	QToolButton* export_mpq = new QToolButton;
+
 	QToolButton* test_map = new QToolButton;
+	QToolButton* settings = new QToolButton;
 	QToolButton* exit = new QToolButton;
 
 	MainRibbon(QWidget* parent);

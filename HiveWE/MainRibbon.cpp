@@ -16,10 +16,10 @@ MainRibbon::MainRibbon(QWidget* parent) : QRibbon(parent) {
 	redo->setText("Redo");
 	history_section->addWidget(redo);
 
-	view_history->setIcon(QIcon("Data/Icons/Ribbon/description32x32.png"));
-	view_history->setText("View\nHistory");
-	view_history->setEnabled(false);
-	history_section->addWidget(view_history);
+	//view_history->setIcon(QIcon("Data/Icons/Ribbon/description32x32.png"));
+	//view_history->setText("View\nHistory");
+	//view_history->setEnabled(false);
+	//history_section->addWidget(view_history);
 
 	/*copy->setIcon(QIcon("Data/Icons/Ribbon/copy32x32.ico"));
 	copy->setText("Copy");
@@ -94,6 +94,11 @@ MainRibbon::MainRibbon(QWidget* parent) : QRibbon(parent) {
 	debug_visible->setCheckable(true);
 	visible_section->addWidget(debug_visible);
 
+	minimap_visible->setIcon(QIcon("Data/Icons/Ribbon/minimap32x32.png"));
+	minimap_visible->setText("Minimap");
+	minimap_visible->setCheckable(true);
+	minimap_visible->setChecked(true);
+	visible_section->addWidget(minimap_visible);
 	// Camera section
 	QRibbonSection* camera_section = new QRibbonSection;
 	camera_section->setText("Camera");
@@ -115,11 +120,17 @@ MainRibbon::MainRibbon(QWidget* parent) : QRibbon(parent) {
 	new_map->setDisabled(true);
 	addMenuItem(new_map);
 
-	open_map->setText("Open Map");
-	open_map->setIcon(QIcon("Data/Icons/Ribbon/open32x32.png"));
-	open_map->setIconSize({ 32, 32 });
-	open_map->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-	addMenuItem(open_map);
+	open_map_folder->setText("Open Map (Folder)");
+	open_map_folder->setIcon(QIcon("Data/Icons/Ribbon/open32x32.png"));
+	open_map_folder->setIconSize({ 32, 32 });
+	open_map_folder->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	addMenuItem(open_map_folder);
+
+	open_map_mpq->setText("Open Map (MPQ)");
+	open_map_mpq->setIcon(QIcon("Data/Icons/Ribbon/open32x32.png"));
+	open_map_mpq->setIconSize({ 32, 32 });
+	open_map_mpq->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	addMenuItem(open_map_mpq);
 
 	save_map->setText("Save Map");
 	save_map->setIcon(QIcon("Data/Icons/Ribbon/save32x32.png"));
@@ -133,11 +144,23 @@ MainRibbon::MainRibbon(QWidget* parent) : QRibbon(parent) {
 	save_map_as->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 	addMenuItem(save_map_as);
 
+	export_mpq->setText("Export MPQ");
+	export_mpq->setIcon(QIcon("Data/Icons/Ribbon/saveas32x32.png"));
+	export_mpq->setIconSize({ 32, 32 });
+	export_mpq->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	addMenuItem(export_mpq);
+
 	test_map->setText("Test Map");
 	test_map->setIcon(QIcon("Data/Icons/Ribbon/test32x32.ico"));
 	test_map->setIconSize({ 32, 32 });
 	test_map->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 	addMenuItem(test_map);
+
+	settings->setText("Settings");
+	settings->setIcon(QIcon("Data/Icons/Ribbon/options32x32.png"));
+	settings->setIconSize({ 32, 32 });
+	settings->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	addMenuItem(settings);
 
 	addMenuSeperator();
 
@@ -216,9 +239,9 @@ MainRibbon::MainRibbon(QWidget* parent) : QRibbon(parent) {
 	import_manager->setText("Import\nManager");
 	editor_section->addWidget(import_manager);
 
-	trigger_viewer->setIcon(QIcon("Data/Icons/Ribbon/triggereditor32x32.png"));
-	trigger_viewer->setText("Trigger\nViewer");
-	editor_section->addWidget(trigger_viewer);
+	trigger_editor->setIcon(QIcon("Data/Icons/Ribbon/triggereditor32x32.png"));
+	trigger_editor->setText("Trigger\nEditor");
+	editor_section->addWidget(trigger_editor);
 
 	object_editor->setIcon(QIcon("Data/Icons/Ribbon/triggereditor32x32.png"));
 	object_editor->setText("Object\nEditor");
