@@ -13,6 +13,7 @@
 #include <sstream>
 #include <queue>
 #include <string>
+#include <stack>
 #include <variant>
 #include <regex>
 #include <random>
@@ -33,6 +34,7 @@ namespace fs = std::filesystem;
 // Dependencies
 #define GLM_FORCE_CXX17
 #define GLM_FORCE_RADIANS
+#define GLM_FORCE_SILENT_WARNINGS
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #ifdef _MSC_VER
@@ -41,6 +43,9 @@ namespace fs = std::filesystem;
 #include <SOIL/SOIL.h>
 #endif
 #include <turbojpeg.h>
+
+#include "json.hpp"
+#include "plf_colony.h"
 
 // Custom Qt Widgets
 #ifdef _DEBUG
@@ -85,10 +90,11 @@ namespace fs = std::filesystem;
 #include "StaticMesh.h"
 #include "SkinnedMesh.h"
 
-#include "WidgetProperties.h"
-#include "EditorWidgets.h"
 #include "TriggerStrings.h"
 #include "Triggers.h"
+#include "Regions.h"
+#include "GameCameras.h"
+#include "Sounds.h"
 #include "TerrainUndo.h"
 #include "Imports.h"
 #include "Terrain.h"
@@ -112,7 +118,6 @@ namespace fs = std::filesystem;
 #include "GLWidget.h"
 
 // Menus
-#include "ObjectEditor.h"
 #include "ImportManagerEdit.h"
 #include "ImportManager.h"
 #include "MapInfoEditor.h"
@@ -124,3 +129,4 @@ namespace fs = std::filesystem;
 #include "TilePicker.h"
 #include "TileSetter.h"
 #include "TilePather.h"
+#include "SettingsEditor.h"
